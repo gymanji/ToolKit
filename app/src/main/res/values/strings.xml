@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ToolKit</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="network_connectivity_title">Network Connectivity Test</string>
+    <string name="connected_network_label">Connected Network:</string>
+    <string name="successful_connection">OK</string>
+    <string name="failed_connection">Failed</string>
+    <string name="email_results">Email Results</string>
+
+</resources>
