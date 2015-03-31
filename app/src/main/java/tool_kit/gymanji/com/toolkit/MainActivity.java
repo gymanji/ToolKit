@@ -7,14 +7,11 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
-import android.view.View.OnClickListener;
+import android.widget.Button;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -22,9 +19,11 @@ import java.net.UnknownHostException;
 public class MainActivity extends ActionBarActivity {
 
     private TextView tvConnectedNetwork;
+    private Button btnConnectivityTester;
     private final String nonWiFi = "Not connected to WiFi";
     private final String unknown = "<unknown ssid>";
     private int StandardSSLPort = 443;
+    private final int SOCKET_TIMEOUT = 5000;
     private final String AppleMAM = "phobos.apple.com";
     private Socket socket;
 
@@ -32,8 +31,6 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        new Thread(new ClientThread()).start();
 
         // Locating currently connected WiFi network
         WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
@@ -49,26 +46,32 @@ public class MainActivity extends ActionBarActivity {
         } else {
             tvConnectedNetwork.setText(currentWiFi2);
         }
-    }
 
-//    public void onClick(View v) {
-//        try {
-//            Socket s = new Socket(AppleMAM,StandardSSLPort);
-//            OutputStream out = s.getOutputStream();
-//
-//            PrintWriter output = new PrintWriter(out);
-//            output.println("Hello Android");
-//            BufferedReader input = new BufferedReader(new InputStreamReader(s.getInputStream()));
-//
-//            String st = input.readLine();
-//            s.close();
-//
-//        } catch (UnknownHostException e) {
-//            e.printStackTrace();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+
+        btnConnectivityTester = (Button) findViewById(R.id.btnConnectivityTester);
+        btnConnectivityTester.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Socket socket = null;
+                boolean socketStatus = false;
+
+                try {
+                    socket = new Socket(AppleMAM, StandardSSLPort);
+                    socketStatus = socket.isConnected();
+                    if(socketStatus) {
+                        socket.close();
+                    } else {
+
+                    }
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -91,13 +94,4 @@ public class MainActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-//    @Override
-//    private boolean portOpen(String dstName, int dstPort) {
-//        try {
-//
-//        } catch ()
-//
-//    }
-
 }
