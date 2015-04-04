@@ -47,7 +47,7 @@ public class MainActivity extends ActionBarActivity {
             tvConnectedNetwork.setText(currentWiFi2);
         }
 
-
+        // Network test connections using Socket
         btnConnectivityTester = (Button) findViewById(R.id.btnConnectivityTester);
         btnConnectivityTester.setOnClickListener(new View.OnClickListener() {
             @Override
