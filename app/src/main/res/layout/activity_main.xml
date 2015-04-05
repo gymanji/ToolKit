@@ -109,9 +109,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/successful_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_successful"/>
+                    android:id="@+id/tvApple_phobos80"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -129,9 +129,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/successful_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_successful"/>
+                    android:id="@+id/tvApple_courier5223"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -148,9 +148,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/successful_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_successful"/>
+                    android:id="@+id/tvApple_courier443"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -167,9 +167,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/failed_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_failed"/>
+                    android:id="@+id/tvApple_ocsp443"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -186,9 +186,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/failed_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_failed"/>
+                    android:id="@+id/tvApple_ocsp80"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -205,9 +205,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/failed_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_failed"/>
+                    android:id="@+id/tvApple_itunes443"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -224,9 +224,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/failed_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_failed"/>
+                    android:id="@+id/tvApple_itunes80"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -250,9 +250,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/successful_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_successful"/>
+                    android:id="@+id/tvAndroid_mtalk5228"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -270,9 +270,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/successful_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_successful"/>
+                    android:id="@+id/tvAndroid_play443"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -296,14 +296,14 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/successful_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_successful"/>
+                    android:id="@+id/tvWindows_net443"
+                    android:text="@string/start_value"
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="*.notify.live.net 443"
+                    android:text="s.notify.live.net 443"
                     android:layout_weight="15"/>
             </LinearLayout>
 
@@ -315,9 +315,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:id="@+id/tvWindows_com443"
                     android:text="@string/successful_connection"
-                    android:layout_weight="85"
-                    style="@style/Connection_successful"/>
+                    android:layout_weight="85"/>
 
                 <TextView
                     android:layout_width="match_parent"
