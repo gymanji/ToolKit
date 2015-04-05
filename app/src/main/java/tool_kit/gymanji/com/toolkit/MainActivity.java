@@ -2,14 +2,15 @@ package tool_kit.gymanji.com.toolkit;
 
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -47,30 +48,51 @@ public class MainActivity extends ActionBarActivity {
             tvConnectedNetwork.setText(currentWiFi2);
         }
 
-        // Network test connections using Socket
+        // Button listener and invocation of asyncTask Socket
         btnConnectivityTester = (Button) findViewById(R.id.btnConnectivityTester);
         btnConnectivityTester.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Socket socket = null;
-                boolean socketStatus = false;
-
-                try {
-                    socket = new Socket(AppleMAM, StandardSSLPort);
-                    socketStatus = socket.isConnected();
-                    if(socketStatus) {
-                        socket.close();
-                    } else {
-
-                    }
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                Log.d("onClick", "onClick just started");
+                ToolKitSocket donkey = new ToolKitSocket(AppleMAM, StandardSSLPort);
+                Log.d("onClick", "new socket just created");
+                donkey.execute();
+                Log.d("onClick", "ToolKitSocket just executed");
             }
         });
+    }
 
+    // Network test connections using Socket
+    public class ToolKitSocket extends AsyncTask<Void, Void, Void> {
+
+        String dstAddress;
+        int dstPort;
+        String response;
+
+        ToolKitSocket(String addr, int port) {
+            dstAddress = addr;
+            dstPort = port;
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0){
+
+            try {
+                Log.d("Socket", "Just entered try block of socket");
+                socket = new Socket(dstAddress, dstPort);
+//                    socketStatus = socket.isConnected();
+//                    if(socketStatus) {
+//                        socket.close();
+//                    } else {
+//
+//                    }
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     @Override
