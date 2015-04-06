@@ -22,15 +22,15 @@ import java.util.Set;
 
 public class MainActivity extends ActionBarActivity {
 
-    private TextView tvConnectedNetwork, tvApple_phobos443, tvApple_phobos80, tvApple_courier5223, tvApple_courier443, tvApple_ocsp443, tvApple_ocsp80,
-            tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
+    public static final String MA_onClick = "MainActivity.onClick", MA_onCreate = "MainActivity.onCreate";
     private static final String NON_WIFI = "Not connected to WiFi", UNKNOWN = "<unknown ssid>", PHOBOS = "phobos.apple.com", COURIER = "1-courier.apple.com",
             OCSP = "ocsp.apple.com", ITUNES = "ax.itunes.apple.com", MTALK = "mtalk.google.com", PLAY = "play.google.com", NOTIFY_NET = "s.notify.live.net";
     private static final int EIGHTY = 80, SSL = 443, FIVETWOTWOTHREE = 5223, FIVETWOTWOEIGHT = 5228;
+    private TextView tvConnectedNetwork, tvApple_phobos443, tvApple_phobos80, tvApple_courier5223, tvApple_courier443, tvApple_ocsp443, tvApple_ocsp80,
+            tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
     private Button btnConnectivityTester;
     private Socket socket;
     boolean returnedBoolFromOnPostExecute;
-//    HashMap networkEndPointsById;
 
 
     @Override
@@ -43,8 +43,8 @@ public class MainActivity extends ActionBarActivity {
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         String currentWiFi = wifiInfo.getSSID();
         String currentWiFi_noQuotes = currentWiFi.substring(1, currentWiFi.length() - 1);
-        Log.d("SSID", currentWiFi);
-        Log.d("rBFOPtE - onCreate", returnedBoolFromOnPostExecute ? "true" : "false");
+        Log.d(MA_onCreate, currentWiFi);
+        Log.d(MA_onCreate, returnedBoolFromOnPostExecute ? "true" : "false");
 
         // Hooking up TextViews for network connection results
         tvConnectedNetwork = (TextView) findViewById(R.id.tvConnectedNetwork);
@@ -70,24 +70,19 @@ public class MainActivity extends ActionBarActivity {
         }
 
         // HashMap for storing values related to network connection testing and corresponding view updates
-//        class NetworkHashTable {
-//            public void main(String[] args) {
+        final HashMap networkEndPointsById = new HashMap<Integer, NetworkObject>();
 
-                final HashMap networkEndPointsById = new HashMap<Integer, NetworkObject>();
-
-                networkEndPointsById.put(1, new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
-                networkEndPointsById.put(2, new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
-                networkEndPointsById.put(3, new NetworkObject(COURIER, FIVETWOTWOTHREE, tvApple_courier5223));
-                networkEndPointsById.put(4, new NetworkObject(COURIER, SSL, tvApple_courier443));
-                networkEndPointsById.put(5, new NetworkObject(OCSP, SSL, tvApple_ocsp443));
-                networkEndPointsById.put(6, new NetworkObject(OCSP, EIGHTY, tvApple_ocsp80));
-                networkEndPointsById.put(7, new NetworkObject(ITUNES, SSL, tvApple_itunes443));
-                networkEndPointsById.put(8, new NetworkObject(ITUNES, EIGHTY, tvApple_itunes80));
-                networkEndPointsById.put(9, new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
-                networkEndPointsById.put(10, new NetworkObject(PLAY, SSL, tvAndroid_play443));
-                networkEndPointsById.put(11, new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
-//            }
-//        }
+        networkEndPointsById.put(1, new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
+        networkEndPointsById.put(2, new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
+        networkEndPointsById.put(3, new NetworkObject(COURIER, FIVETWOTWOTHREE, tvApple_courier5223));
+        networkEndPointsById.put(4, new NetworkObject(COURIER, SSL, tvApple_courier443));
+        networkEndPointsById.put(5, new NetworkObject(OCSP, SSL, tvApple_ocsp443));
+        networkEndPointsById.put(6, new NetworkObject(OCSP, EIGHTY, tvApple_ocsp80));
+        networkEndPointsById.put(7, new NetworkObject(ITUNES, SSL, tvApple_itunes443));
+        networkEndPointsById.put(8, new NetworkObject(ITUNES, EIGHTY, tvApple_itunes80));
+        networkEndPointsById.put(9, new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
+        networkEndPointsById.put(10, new NetworkObject(PLAY, SSL, tvAndroid_play443));
+        networkEndPointsById.put(11, new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
 
         // Button listener and invocation of asyncTask Socket
         btnConnectivityTester = (Button) findViewById(R.id.btnConnectivityTester);
@@ -95,14 +90,8 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-                Log.d("onClick", "onClick just started");
 
                 Set<Map.Entry<Integer, NetworkObject>> entrySet = networkEndPointsById.entrySet();
-
-                //Debug logging
-                boolean hashMapEmpty = networkEndPointsById.isEmpty();
-                String hashMapEmpty2 = Boolean.toString(hashMapEmpty);
-                Log.d("onClick - hasMapEmptyBool", hashMapEmpty2);
 
                 // Loop through network connections to test endpoints and update view
                 for (Map.Entry<Integer, NetworkObject> entry : entrySet) {
@@ -110,12 +99,12 @@ public class MainActivity extends ActionBarActivity {
                     NetworkObject networkobject = entry.getValue();
 
                     ToolKitSocket donkey = new ToolKitSocket(networkobject.getDestAddr(), networkobject.getPort());
-                    Log.d("onClick", "new socket just created");
+                    Log.d(MA_onClick, "new socket just created");
                     donkey.execute();
-                    Log.d("onClick", "ToolKitSocket just executed");
+                    Log.d(MA_onClick, "ToolKitSocket just executed");
 
                     TextView currentTV = networkobject.getTextView();
-                    Log.d("rBFOPtE - onClick", returnedBoolFromOnPostExecute ? "true" : "false");
+                    Log.d(MA_onClick, returnedBoolFromOnPostExecute ? "true" : "false");
                     if (returnedBoolFromOnPostExecute) {
                         currentTV.setText(getResources().getString(R.string.successful_connection));
                         currentTV.setTextAppearance(getApplicationContext(), R.style.Connection_successful);
@@ -129,7 +118,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     // Class for custom object to store necessary network connection-related values
-    public class NetworkObject {
+    private static class NetworkObject {
         private String destAddr;
         private int port;
         private TextView textView;
@@ -156,6 +145,7 @@ public class MainActivity extends ActionBarActivity {
     // Implementation of network test connection using Socket
     public class ToolKitSocket extends AsyncTask<Void, Void, Boolean> {
 
+        public static final String TK_doInBackground = "TKS.doInBackground";
         String dstAddress;
         int dstPort;
         Boolean response;
@@ -171,17 +161,17 @@ public class MainActivity extends ActionBarActivity {
             boolean socketStatus;
 
             try {
-                Log.d("Socket", "Just entered try block of socket");
+                Log.d(TK_doInBackground, "Just entered try block of socket");
                 socket = new Socket(dstAddress, dstPort);
                 socketStatus = socket.isConnected();
-                Log.d("Socket", "socketStatus = " + socketStatus);
+                Log.d(TK_doInBackground, "socketStatus = " + socketStatus);
                 if (socketStatus) {
                     socket.close();
                     response = socketStatus;
-                    Log.d("Socket", "socket.close() just executed");
+                    Log.d(TK_doInBackground, "socket.close() just executed");
 
                 } else {
-                    Log.d("Socket", "shit just got real");
+                    Log.d(TK_doInBackground, "shit just got real");
                 }
             } catch (UnknownHostException e) {
                 e.printStackTrace();
