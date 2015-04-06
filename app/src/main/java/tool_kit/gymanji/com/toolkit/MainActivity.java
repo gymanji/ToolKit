@@ -15,9 +15,8 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -69,20 +68,19 @@ public class MainActivity extends ActionBarActivity {
             tvConnectedNetwork.setText(currentWiFi_noQuotes);
         }
 
-        // HashMap for storing values related to network connection testing and corresponding view updates
-        final HashMap networkEndPointsById = new HashMap<Integer, NetworkObject>();
+        final ArrayList<NetworkObject> arrayList = new ArrayList<NetworkObject>();
 
-        networkEndPointsById.put(1, new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
-        networkEndPointsById.put(2, new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
-        networkEndPointsById.put(3, new NetworkObject(COURIER, FIVETWOTWOTHREE, tvApple_courier5223));
-        networkEndPointsById.put(4, new NetworkObject(COURIER, SSL, tvApple_courier443));
-        networkEndPointsById.put(5, new NetworkObject(OCSP, SSL, tvApple_ocsp443));
-        networkEndPointsById.put(6, new NetworkObject(OCSP, EIGHTY, tvApple_ocsp80));
-        networkEndPointsById.put(7, new NetworkObject(ITUNES, SSL, tvApple_itunes443));
-        networkEndPointsById.put(8, new NetworkObject(ITUNES, EIGHTY, tvApple_itunes80));
-        networkEndPointsById.put(9, new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
-        networkEndPointsById.put(10, new NetworkObject(PLAY, SSL, tvAndroid_play443));
-        networkEndPointsById.put(11, new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
+        arrayList.add(new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
+        arrayList.add(new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
+        arrayList.add(new NetworkObject(COURIER, FIVETWOTWOTHREE, tvApple_courier5223));
+        arrayList.add(new NetworkObject(COURIER, SSL, tvApple_courier443));
+        arrayList.add(new NetworkObject(OCSP, SSL, tvApple_ocsp443));
+        arrayList.add(new NetworkObject(OCSP, EIGHTY, tvApple_ocsp80));
+        arrayList.add(new NetworkObject(ITUNES, SSL, tvApple_itunes443));
+        arrayList.add(new NetworkObject(ITUNES, EIGHTY, tvApple_itunes80));
+        arrayList.add(new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
+        arrayList.add(new NetworkObject(PLAY, SSL, tvAndroid_play443));
+        arrayList.add(new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
 
         // Button listener and invocation of asyncTask Socket
         btnConnectivityTester = (Button) findViewById(R.id.btnConnectivityTester);
@@ -91,29 +89,10 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                Set<Map.Entry<Integer, NetworkObject>> entrySet = networkEndPointsById.entrySet();
-
-                // Loop through network connections to test endpoints and update view
-                for (Map.Entry<Integer, NetworkObject> entry : entrySet) {
-
-                    NetworkObject networkobject = entry.getValue();
-
-                    ToolKitSocket donkey = new ToolKitSocket(networkobject.getDestAddr(), networkobject.getPort());
-                    Log.d(MA_onClick, "new socket just created");
-                    donkey.execute();
-                    Log.d(MA_onClick, "ToolKitSocket just executed");
-
-                    TextView currentTV = networkobject.getTextView();
-                    Log.d(MA_onClick, returnedBoolFromOnPostExecute ? "true" : "false");
-                    if (returnedBoolFromOnPostExecute) {
-                        currentTV.setText(getResources().getString(R.string.successful_connection));
-                        currentTV.setTextAppearance(getApplicationContext(), R.style.Connection_successful);
-                    } else {
-                        currentTV.setText(getResources().getString(R.string.failed_connection));
-                        currentTV.setTextAppearance(getApplicationContext(), R.style.Connection_failed);
-                    }
-                }
-            }
+                ToolKitSocket donkey = new ToolKitSocket(arrayList);
+                Log.d(MA_onClick, "new socket just created");
+                donkey.execute();
+            }   
         });
     }
 
@@ -122,69 +101,63 @@ public class MainActivity extends ActionBarActivity {
         private String destAddr;
         private int port;
         private TextView textView;
+        boolean response;
 
         public NetworkObject(String destAddr, int port, TextView textView) {
             this.destAddr = destAddr;
             this.port = port;
             this.textView = textView;
         }
-
-        public String getDestAddr() {
-            return destAddr;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public TextView getTextView() {
-            return textView;
-        }
     }
 
     // Implementation of network test connection using Socket
-    public class ToolKitSocket extends AsyncTask<Void, Void, Boolean> {
+    public class ToolKitSocket extends AsyncTask<Void, Void, List<NetworkObject>> {
 
         public static final String TK_doInBackground = "TKS.doInBackground";
-        String dstAddress;
-        int dstPort;
-        Boolean response;
+        public static final int SO_TIMEOUT = 2000;
+        private final List<NetworkObject> lno;
 
-        ToolKitSocket(String addr, int port) {
-            dstAddress = addr;
-            dstPort = port;
+        ToolKitSocket(List<NetworkObject> lno) {
+            this.lno = lno;
         }
 
         @Override
-        protected Boolean doInBackground(Void... arg0) {
+        protected List<NetworkObject> doInBackground(Void... arg0) {
 
-            boolean socketStatus;
+            for (NetworkObject networkObject : lno) {
+                try {
+                    Log.d(TK_doInBackground, networkObject.destAddr + ": " + networkObject.port + "Just entered try block of socket");
+                    socket = new Socket(networkObject.destAddr, networkObject.port);
+                    socket.setSoTimeout(SO_TIMEOUT);
+                    networkObject.response = socket.isConnected();
+                    Log.d(TK_doInBackground, "socketStatus = " + networkObject.response);
+                    if (networkObject.response) {
+                        socket.close();
+                        Log.d(TK_doInBackground, "socket.close() just executed");
 
-            try {
-                Log.d(TK_doInBackground, "Just entered try block of socket");
-                socket = new Socket(dstAddress, dstPort);
-                socketStatus = socket.isConnected();
-                Log.d(TK_doInBackground, "socketStatus = " + socketStatus);
-                if (socketStatus) {
-                    socket.close();
-                    response = socketStatus;
-                    Log.d(TK_doInBackground, "socket.close() just executed");
-
-                } else {
-                    Log.d(TK_doInBackground, "shit just got real");
+                    } else {
+                        Log.d(TK_doInBackground, "shit just got real");
+                    }
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (UnknownHostException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            return response;
+            return lno;
         }
 
         @Override
-        protected void onPostExecute(Boolean result) {
-            returnedBoolFromOnPostExecute = response;
-            super.onPostExecute(returnedBoolFromOnPostExecute);
+        protected void onPostExecute(List<NetworkObject> result) {
+            for (NetworkObject networkObject : result) {
+                if (networkObject.response) {
+                    networkObject.textView.setText(getResources().getString(R.string.successful_connection));
+                    networkObject.textView.setTextAppearance(getApplicationContext(), R.style.Connection_successful);
+                } else {
+                    networkObject.textView.setText(getResources().getString(R.string.failed_connection));
+                    networkObject.textView.setTextAppearance(getApplicationContext(), R.style.Connection_failed);
+                }
+            }
         }
     }
 
