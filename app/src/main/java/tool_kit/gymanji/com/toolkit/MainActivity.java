@@ -1,5 +1,7 @@
 package tool_kit.gymanji.com.toolkit;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -27,9 +29,8 @@ public class MainActivity extends ActionBarActivity {
     private static final int EIGHTY = 80, SSL = 443, FIVETWOTWOTHREE = 5223, FIVETWOTWOEIGHT = 5228;
     private TextView tvConnectedNetwork, tvApple_phobos443, tvApple_phobos80, tvApple_courier5223, tvApple_courier443, tvApple_ocsp443, tvApple_ocsp80,
             tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
-    private Button btnConnectivityTester;
+    private Button btnConnectivityTester, btnEmailResults;
     private Socket socket;
-    boolean returnedBoolFromOnPostExecute;
 
 
     @Override
@@ -43,7 +44,6 @@ public class MainActivity extends ActionBarActivity {
         String currentWiFi = wifiInfo.getSSID();
         String currentWiFi_noQuotes = currentWiFi.substring(1, currentWiFi.length() - 1);
         Log.d(MA_onCreate, currentWiFi);
-        Log.d(MA_onCreate, returnedBoolFromOnPostExecute ? "true" : "false");
 
         // Hooking up TextViews for network connection results
         tvConnectedNetwork = (TextView) findViewById(R.id.tvConnectedNetwork);
@@ -92,8 +92,55 @@ public class MainActivity extends ActionBarActivity {
                 ToolKitSocket donkey = new ToolKitSocket(arrayList);
                 Log.d(MA_onClick, "new socket just created");
                 donkey.execute();
-            }   
+            }
         });
+
+        // Send results via email to Administrator
+        btnEmailResults = (Button) findViewById(R.id.btnEmailResults);
+        btnEmailResults.setOnClickListener(new View.OnClickListener() {
+
+            String Apple_phobos443, Apple_phobos80,Apple_courier5223,Apple_courier443,Apple_ocsp443,Apple_ocsp80,Apple_itunes443,
+                    Apple_itunes80,Android_mtalk5228,Android_play443,Windows_net443;
+
+            @Override
+            public void onClick(View v) {
+
+                convertTextViewsToStrings();
+
+                String message = "Results of Network Connectivity testing:\n\n" +
+                        "phobos.apple.com 443: " + Apple_phobos443 + "\n" +
+                        "phobos.apple.com 80: " + Apple_phobos80 + "\n" +
+                        "*-courier.apple.com 5223: " + Apple_courier5223 + "\n" +
+                        "*-courier.apple.com 443: " + Apple_courier443 + "\n" +
+                        "ocsp.apple.com 443: " + Apple_ocsp443 + "\n" +
+                        "ocsp.apple.com 80: " + Apple_ocsp80 + "\n" +
+                        "ax.itunes.apple.com 443: " + Apple_itunes443 + "\n" +
+                        "ax.itunes.apple.com 80: " + Apple_itunes80 + "\n" +
+                        "mtalk.google.com 5228: " + Android_mtalk5228 + "\n" +
+                        "play.google.com 443: " + Android_play443 + "\n" +
+                        "s.notify.com 443: " + Windows_net443 + "\n";
+
+                Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:ZachReed@air-watch.com"));
+                sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results");
+                sendEmailIntent.putExtra(Intent.EXTRA_TEXT, message);
+                startActivity(sendEmailIntent);
+            }
+
+            private void convertTextViewsToStrings() {
+                Apple_phobos443 = tvApple_phobos443.getText().toString();
+                Apple_phobos80 = tvApple_phobos80.getText().toString();
+                Apple_courier5223 = tvApple_courier5223.getText().toString();
+                Apple_courier443 = tvApple_courier443.getText().toString();
+                Apple_ocsp443 = tvApple_ocsp443.getText().toString();
+                Apple_ocsp80 = tvApple_ocsp80.getText().toString();
+                Apple_itunes443 = tvApple_itunes443.getText().toString();
+                Apple_itunes80 = tvApple_itunes80.getText().toString();
+                Android_mtalk5228 = tvAndroid_mtalk5228.getText().toString();
+                Android_play443 = tvAndroid_play443.getText().toString();
+                Windows_net443 = tvWindows_net443.getText().toString();
+            }
+        });
+
     }
 
     // Class for custom object to store necessary network connection-related values
@@ -126,7 +173,7 @@ public class MainActivity extends ActionBarActivity {
 
             for (NetworkObject networkObject : lno) {
                 try {
-                    Log.d(TK_doInBackground, networkObject.destAddr + ": " + networkObject.port + "Just entered try block of socket");
+                    Log.d(TK_doInBackground, networkObject.destAddr + ": " + networkObject.port + " Just entered try block of socket");
                     socket = new Socket(networkObject.destAddr, networkObject.port);
                     socket.setSoTimeout(SO_TIMEOUT);
                     networkObject.response = socket.isConnected();
