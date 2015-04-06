@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -31,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
             tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
     private Button btnConnectivityTester, btnEmailResults;
     private Socket socket;
-
+    int buttonCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-
+                buttonCounter++;
                 ToolKitSocket donkey = new ToolKitSocket(arrayList);
                 Log.d(MA_onClick, "new socket just created");
                 donkey.execute();
@@ -105,25 +106,31 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                convertTextViewsToStrings();
+                if (buttonCounter < 1) {
+                    Toast testNotRun = Toast.makeText(getApplicationContext(), "Click 'Run Test' first!", Toast.LENGTH_LONG);
+                    testNotRun.show();
+                } else {
 
-                String message = "Results of Network Connectivity testing:\n\n" +
-                        "phobos.apple.com 443: " + Apple_phobos443 + "\n" +
-                        "phobos.apple.com 80: " + Apple_phobos80 + "\n" +
-                        "*-courier.apple.com 5223: " + Apple_courier5223 + "\n" +
-                        "*-courier.apple.com 443: " + Apple_courier443 + "\n" +
-                        "ocsp.apple.com 443: " + Apple_ocsp443 + "\n" +
-                        "ocsp.apple.com 80: " + Apple_ocsp80 + "\n" +
-                        "ax.itunes.apple.com 443: " + Apple_itunes443 + "\n" +
-                        "ax.itunes.apple.com 80: " + Apple_itunes80 + "\n" +
-                        "mtalk.google.com 5228: " + Android_mtalk5228 + "\n" +
-                        "play.google.com 443: " + Android_play443 + "\n" +
-                        "s.notify.com 443: " + Windows_net443 + "\n";
+                    convertTextViewsToStrings();
 
-                Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:ZachReed@air-watch.com"));
-                sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results");
-                sendEmailIntent.putExtra(Intent.EXTRA_TEXT, message);
-                startActivity(sendEmailIntent);
+                    String message = "Results of Network Connectivity testing:\n\n" +
+                            "phobos.apple.com 443: " + Apple_phobos443 + "\n" +
+                            "phobos.apple.com 80: " + Apple_phobos80 + "\n" +
+                            "*-courier.apple.com 5223: " + Apple_courier5223 + "\n" +
+                            "*-courier.apple.com 443: " + Apple_courier443 + "\n" +
+                            "ocsp.apple.com 443: " + Apple_ocsp443 + "\n" +
+                            "ocsp.apple.com 80: " + Apple_ocsp80 + "\n" +
+                            "ax.itunes.apple.com 443: " + Apple_itunes443 + "\n" +
+                            "ax.itunes.apple.com 80: " + Apple_itunes80 + "\n" +
+                            "mtalk.google.com 5228: " + Android_mtalk5228 + "\n" +
+                            "play.google.com 443: " + Android_play443 + "\n" +
+                            "s.notify.com 443: " + Windows_net443 + "\n";
+
+                    Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:ZachReed@air-watch.com"));
+                    sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results");
+                    sendEmailIntent.putExtra(Intent.EXTRA_TEXT, message);
+                    startActivity(sendEmailIntent);
+                }
             }
 
             private void convertTextViewsToStrings() {
