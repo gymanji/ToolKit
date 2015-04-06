@@ -24,13 +24,13 @@ public class MainActivity extends ActionBarActivity {
 
     private TextView tvConnectedNetwork, tvApple_phobos443, tvApple_phobos80, tvApple_courier5223, tvApple_courier443, tvApple_ocsp443, tvApple_ocsp80,
             tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
-    private Button btnConnectivityTester;
-    private final String NON_WIFI = "Not connected to WiFi", UNKNOWN = "<unknown ssid>", PHOBOS = "phobos.apple.com", COURIER = "1-courier.apple.com",
+    private static final String NON_WIFI = "Not connected to WiFi", UNKNOWN = "<unknown ssid>", PHOBOS = "phobos.apple.com", COURIER = "1-courier.apple.com",
             OCSP = "ocsp.apple.com", ITUNES = "ax.itunes.apple.com", MTALK = "mtalk.google.com", PLAY = "play.google.com", NOTIFY_NET = "s.notify.live.net";
-    private final int EIGHTY = 80, SSL = 443, FIVETWOTWOTHREE = 5223, FIVETWOTWOEIGHT = 5228;
+    private static final int EIGHTY = 80, SSL = 443, FIVETWOTWOTHREE = 5223, FIVETWOTWOEIGHT = 5228;
+    private Button btnConnectivityTester;
     private Socket socket;
     boolean returnedBoolFromOnPostExecute;
-    Map networkEndPointsById;
+//    HashMap networkEndPointsById;
 
 
     @Override
@@ -69,10 +69,11 @@ public class MainActivity extends ActionBarActivity {
             tvConnectedNetwork.setText(currentWiFi_noQuotes);
         }
 
-        class NetworkHashTable {
-            public void main(String[] args) {
+        // HashMap for storing values related to network connection testing and corresponding view updates
+//        class NetworkHashTable {
+//            public void main(String[] args) {
 
-                Map networkEndPointsById = new HashMap<Integer, NetworkObject>();
+                final HashMap networkEndPointsById = new HashMap<Integer, NetworkObject>();
 
                 networkEndPointsById.put(1, new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
                 networkEndPointsById.put(2, new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
@@ -85,33 +86,8 @@ public class MainActivity extends ActionBarActivity {
                 networkEndPointsById.put(9, new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
                 networkEndPointsById.put(10, new NetworkObject(PLAY, SSL, tvAndroid_play443));
                 networkEndPointsById.put(11, new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
-
-//            NetworkObject Apple1 = new NetworkObject("phobos.apple.com", 443, tvApple_phobos443);
-//            NetworkObject Apple2 = new NetworkObject("phobos.apple.com", 80, tvApple_phobos80);
-//            NetworkObject Apple3 = new NetworkObject("1-courier.apple.com", 5223, tvApple_courier5223);
-//            NetworkObject Apple4 = new NetworkObject("1-courier.apple.com", 443, tvApple_courier443);
-//            NetworkObject Apple5 = new NetworkObject("ocsp.apple.com", 443, tvApple_ocsp443);
-//            NetworkObject Apple6 = new NetworkObject("ocsp.apple.com", 80, tvApple_ocsp80);
-//            NetworkObject Apple7 = new NetworkObject("ax.itunes.apple.com", 443, tvApple_itunes443);
-//            NetworkObject Apple8 = new NetworkObject("ax.itunes.apple.com", 80, tvApple_itunes80);
-//            NetworkObject Android1 = new NetworkObject("mtalk.google.com", 5228, tvAndroid_mtalk5228);
-//            NetworkObject Android2 = new NetworkObject("play.google.com", 443, tvAndroid_play443);
-//            NetworkObject Windows1 = new NetworkObject("s.notify.live.net", 443, tvWindows_net443);
-//            Map network_endpoints = new HashMap<NetworkObject, String>();
-//            network_endpoints.put("phobos.apple.com", 443);
-//            network_endpoints.put("phobos.apple.com", 80);
-//            network_endpoints.put("1-courier.apple.com", 5223);
-//            network_endpoints.put("1-courier.apple.com", 443);
-//            network_endpoints.put("ocsp.apple.com", 443);
-//            network_endpoints.put("ocsp.apple.com", 80);
-//            network_endpoints.put("ax.itunes.apple.com", 443);
-//            network_endpoints.put("ax.itunes.apple.com", 80);
-//            network_endpoints.put("mtalk.google.com", 5228);
-//            network_endpoints.put("play.google.com", 443);
-//            network_endpoints.put("s.notify.live.net", 443);
-//            network_endpoints.put("notify.windows.com", 443);
-            }
-        }
+//            }
+//        }
 
         // Button listener and invocation of asyncTask Socket
         btnConnectivityTester = (Button) findViewById(R.id.btnConnectivityTester);
@@ -121,9 +97,14 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 Log.d("onClick", "onClick just started");
 
-//                Collection<NetworkObject> networkObjects = networkEndPointsById.values();
                 Set<Map.Entry<Integer, NetworkObject>> entrySet = networkEndPointsById.entrySet();
 
+                //Debug logging
+                boolean hashMapEmpty = networkEndPointsById.isEmpty();
+                String hashMapEmpty2 = Boolean.toString(hashMapEmpty);
+                Log.d("onClick - hasMapEmptyBool", hashMapEmpty2);
+
+                // Loop through network connections to test endpoints and update view
                 for (Map.Entry<Integer, NetworkObject> entry : entrySet) {
 
                     NetworkObject networkobject = entry.getValue();
@@ -147,6 +128,7 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
+    // Class for custom object to store necessary network connection-related values
     public class NetworkObject {
         private String destAddr;
         private int port;
@@ -171,7 +153,7 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    // Network test connections using Socket
+    // Implementation of network test connection using Socket
     public class ToolKitSocket extends AsyncTask<Void, Void, Boolean> {
 
         String dstAddress;
