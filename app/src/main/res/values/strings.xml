@@ -9,6 +9,7 @@
     <string name="failed_connection">Failed</string>
     <string name="start_value"> -- </string>
     <string name="email_results">Email Results</string>
+    <string name="title_activity_opener">Opener</string>
 
 
 </resources>
