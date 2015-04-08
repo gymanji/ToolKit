@@ -42,49 +42,10 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Locating currently connected WiFi network
-        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        String currentWiFi = wifiInfo.getSSID();
-        String currentWiFi_noQuotes = currentWiFi.substring(1, currentWiFi.length() - 1);
-        Log.d(MA_onCreate, currentWiFi);
-
-        // Hooking up TextViews for network connection results
-        tvConnectedNetwork = (TextView) findViewById(R.id.tvConnectedNetwork);
-        tvApple_phobos443 = (TextView) findViewById(R.id.tvApple_phobos443);
-        tvApple_phobos80 = (TextView) findViewById(R.id.tvApple_phobos80);
-        tvApple_courier5223 = (TextView) findViewById(R.id.tvApple_courier5223);
-        tvApple_courier443 = (TextView) findViewById(R.id.tvApple_courier443);
-        tvApple_ocsp443 = (TextView) findViewById(R.id.tvApple_ocsp443);
-        tvApple_ocsp80 = (TextView) findViewById(R.id.tvApple_ocsp80);
-        tvApple_ocsp443 = (TextView) findViewById(R.id.tvApple_ocsp443);
-        tvApple_itunes443 = (TextView) findViewById(R.id.tvApple_itunes443);
-        tvApple_itunes80 = (TextView) findViewById(R.id.tvApple_itunes80);
-        tvAndroid_mtalk5228 = (TextView) findViewById(R.id.tvAndroid_mtalk5228);
-        tvAndroid_play443 = (TextView) findViewById(R.id.tvAndroid_play443);
-        tvWindows_net443 = (TextView) findViewById(R.id.tvWindows_net443);
-        tvWindows_com443 = (TextView) findViewById(R.id.tvWindows_com443);
-
-        // Update TextView depending on network connection type
-        if (currentWiFi == UNKNOWN) {
-            tvConnectedNetwork.setText(NON_WIFI);
-        } else {
-            tvConnectedNetwork.setText(currentWiFi_noQuotes);
-        }
+        wifiConnectionStatus();
 
         final ArrayList<NetworkObject> arrayList = new ArrayList<NetworkObject>();
-
-        arrayList.add(new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
-        arrayList.add(new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
-        arrayList.add(new NetworkObject(COURIER, FIVETWOTWOTHREE, tvApple_courier5223));
-        arrayList.add(new NetworkObject(COURIER, SSL, tvApple_courier443));
-        arrayList.add(new NetworkObject(OCSP, SSL, tvApple_ocsp443));
-        arrayList.add(new NetworkObject(OCSP, EIGHTY, tvApple_ocsp80));
-        arrayList.add(new NetworkObject(ITUNES, SSL, tvApple_itunes443));
-        arrayList.add(new NetworkObject(ITUNES, EIGHTY, tvApple_itunes80));
-        arrayList.add(new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
-        arrayList.add(new NetworkObject(PLAY, SSL, tvAndroid_play443));
-        arrayList.add(new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
+        addItemstoArrayList(arrayList);
 
         // Button listener and invocation of asyncTask Socket
         btnConnectivityTester = (Button) findViewById(R.id.btnConnectivityTester);
@@ -110,14 +71,15 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 if (buttonCounter < 1) {
-                    Toast testNotRun = Toast.makeText(getApplicationContext(), "Click 'Run Test' first!", Toast.LENGTH_LONG);
+                    Toast testNotRun = Toast.makeText(getApplicationContext(), "Click Run Test first!", Toast.LENGTH_LONG);
                     testNotRun.show();
                 } else {
                     convertTextViewsToStrings();
                     SimpleDateFormat emailDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
                     currentDateTime = emailDF.format(Calendar.getInstance().getTime());
 
-                    String message = "Connected WiFi Network: " + ConnectedNetwork + "\n\n" +
+                    String message = "Test time: " + currentDateTime + "\n\n" +
+                            "Connected WiFi Network: " + ConnectedNetwork + "\n\n" +
                             "phobos.apple.com 443: \t" + Apple_phobos443 + "\n" +
                             "phobos.apple.com 80: \t" + Apple_phobos80 + "\n" +
                             "*-courier.apple.com 5223: \t" + Apple_courier5223 + "\n" +
@@ -131,7 +93,7 @@ public class MainActivity extends ActionBarActivity {
                             "s.notify.com 443: \t" + Windows_net443 + "\n";
 
                     Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:ZachReed@air-watch.com"));
-                    sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results: " + currentDateTime);
+                    sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results");
                     sendEmailIntent.putExtra(Intent.EXTRA_TEXT, message);
                     startActivity(sendEmailIntent);
                 }
@@ -153,6 +115,23 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
+    }
+
+    private void wifiConnectionStatus() {
+        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        String currentWiFi = wifiInfo.getSSID();
+        String currentWiFi_noQuotes = currentWiFi.substring(1, currentWiFi.length() - 1);
+        Log.d(MA_onCreate, currentWiFi);
+
+        createTextViewReferences();
+
+        // Update TextView depending on network connection type
+        if (currentWiFi == UNKNOWN) {
+            tvConnectedNetwork.setText(NON_WIFI);
+        } else {
+            tvConnectedNetwork.setText(currentWiFi_noQuotes);
+        }
     }
 
     // Class for custom object to store necessary network connection-related values
@@ -218,6 +197,37 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         }
+    }
+
+    private void addItemstoArrayList(ArrayList<NetworkObject> arrayList) {
+        arrayList.add(new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
+        arrayList.add(new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
+        arrayList.add(new NetworkObject(COURIER, FIVETWOTWOTHREE, tvApple_courier5223));
+        arrayList.add(new NetworkObject(COURIER, SSL, tvApple_courier443));
+        arrayList.add(new NetworkObject(OCSP, SSL, tvApple_ocsp443));
+        arrayList.add(new NetworkObject(OCSP, EIGHTY, tvApple_ocsp80));
+        arrayList.add(new NetworkObject(ITUNES, SSL, tvApple_itunes443));
+        arrayList.add(new NetworkObject(ITUNES, EIGHTY, tvApple_itunes80));
+        arrayList.add(new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
+        arrayList.add(new NetworkObject(PLAY, SSL, tvAndroid_play443));
+        arrayList.add(new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
+    }
+
+    private void createTextViewReferences() {
+        tvConnectedNetwork = (TextView) findViewById(R.id.tvConnectedNetwork);
+        tvApple_phobos443 = (TextView) findViewById(R.id.tvApple_phobos443);
+        tvApple_phobos80 = (TextView) findViewById(R.id.tvApple_phobos80);
+        tvApple_courier5223 = (TextView) findViewById(R.id.tvApple_courier5223);
+        tvApple_courier443 = (TextView) findViewById(R.id.tvApple_courier443);
+        tvApple_ocsp443 = (TextView) findViewById(R.id.tvApple_ocsp443);
+        tvApple_ocsp80 = (TextView) findViewById(R.id.tvApple_ocsp80);
+        tvApple_ocsp443 = (TextView) findViewById(R.id.tvApple_ocsp443);
+        tvApple_itunes443 = (TextView) findViewById(R.id.tvApple_itunes443);
+        tvApple_itunes80 = (TextView) findViewById(R.id.tvApple_itunes80);
+        tvAndroid_mtalk5228 = (TextView) findViewById(R.id.tvAndroid_mtalk5228);
+        tvAndroid_play443 = (TextView) findViewById(R.id.tvAndroid_play443);
+        tvWindows_net443 = (TextView) findViewById(R.id.tvWindows_net443);
+        tvWindows_com443 = (TextView) findViewById(R.id.tvWindows_com443);
     }
 
     @Override
