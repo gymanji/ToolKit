@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +36,7 @@ public class MainActivity extends ActionBarActivity {
     private TextView tvConnectedNetwork, tvApple_phobos443, tvApple_phobos80, tvApple_courier5223, tvApple_courier443, tvApple_ocsp443, tvApple_ocsp80,
             tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
     private Button btnConnectivityTester, btnEmailResults;
+    private LinearLayout wifiLinearLayout;
     private Socket socket;
     private int buttonCounter = 0;
     ProgressBar progressBar;
@@ -57,13 +59,15 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-
+                btnConnectivityTester.setEnabled(false);
                 resetItemsInViewFromPreviousTests();
 
                 buttonCounter++;
                 ToolKitSocket donkey = new ToolKitSocket(arrayList);
 //                Log.d(MA_onClick, "new socket just created");
                 donkey.execute();
+                progressBar.setVisibility(View.VISIBLE);
+                btnConnectivityTester.setEnabled(true);
             }
         });
 
@@ -78,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 if (buttonCounter < 1) {
-                    Toast testNotRun = Toast.makeText(getApplicationContext(), "You haven't run the test yet!", Toast.LENGTH_LONG);
+                    Toast testNotRun = Toast.makeText(getApplicationContext(), "Click RUN TEST first!", Toast.LENGTH_LONG);
                     testNotRun.show();
                 } else {
                     convertTextViewsToStrings();
@@ -97,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
                             "ax.itunes.apple.com 80: \t" + Apple_itunes80 + "\n" +
                             "mtalk.google.com 5228: \t" + Android_mtalk5228 + "\n" +
                             "play.google.com 443: \t" + Android_play443 + "\n" +
-                            "s.notify.com 443: \t" + Windows_net443 + "\n";
+                            "s.notify.window.net 443: \t" + Windows_net443 + "\n";
 
                     Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:ZachReed@air-watch.com"));
                     sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results");
@@ -118,6 +122,13 @@ public class MainActivity extends ActionBarActivity {
                 Android_play443 = tvAndroid_play443.getText().toString();
                 Windows_net443 = tvWindows_net443.getText().toString();
                 ConnectedNetwork = tvConnectedNetwork.getText().toString();
+            }
+        });
+
+        wifiLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                wifiConnectionStatus();
             }
         });
     }
@@ -262,6 +273,7 @@ public class MainActivity extends ActionBarActivity {
         tvWindows_net443 = (TextView) findViewById(R.id.tvWindows_net443);
         tvWindows_com443 = (TextView) findViewById(R.id.tvWindows_com443);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        wifiLinearLayout = (LinearLayout) findViewById(R.id.wifiLinearLayout);
     }
 
     @Override
