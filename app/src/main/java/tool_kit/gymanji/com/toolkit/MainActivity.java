@@ -12,19 +12,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    public static final String MA_onClick = "MainActivity.onClick", MA_onCreate = "MainActivity.onCreate";
+    private static final String MA_onClick = "MainActivity.onClick", MA_onCreate = "MainActivity.onCreate";
     private static final String NON_WIFI = "Not connected to WiFi", UNKNOWN = "<unknown ssid>", PHOBOS = "phobos.apple.com", COURIER = "1-courier.apple.com",
             OCSP = "ocsp.apple.com", ITUNES = "ax.itunes.apple.com", MTALK = "mtalk.google.com", PLAY = "play.google.com", NOTIFY_NET = "s.notify.live.net";
     private static final int EIGHTY = 80, SSL = 443, FIVETWOTWOTHREE = 5223, FIVETWOTWOEIGHT = 5228;
@@ -32,56 +36,24 @@ public class MainActivity extends ActionBarActivity {
             tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
     private Button btnConnectivityTester, btnEmailResults;
     private Socket socket;
+<<<<<<< HEAD
     int buttonCounter = 0;
+=======
+    private int buttonCounter = 0;
+    ProgressBar progressBar;
+    private int progress_status = 0;
+>>>>>>> OpeningScreen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Locating currently connected WiFi network
-        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-        String currentWiFi = wifiInfo.getSSID();
-        String currentWiFi_noQuotes = currentWiFi.substring(1, currentWiFi.length() - 1);
-        Log.d(MA_onCreate, currentWiFi);
-
-        // Hooking up TextViews for network connection results
-        tvConnectedNetwork = (TextView) findViewById(R.id.tvConnectedNetwork);
-        tvApple_phobos443 = (TextView) findViewById(R.id.tvApple_phobos443);
-        tvApple_phobos80 = (TextView) findViewById(R.id.tvApple_phobos80);
-        tvApple_courier5223 = (TextView) findViewById(R.id.tvApple_courier5223);
-        tvApple_courier443 = (TextView) findViewById(R.id.tvApple_courier443);
-        tvApple_ocsp443 = (TextView) findViewById(R.id.tvApple_ocsp443);
-        tvApple_ocsp80 = (TextView) findViewById(R.id.tvApple_ocsp80);
-        tvApple_ocsp443 = (TextView) findViewById(R.id.tvApple_ocsp443);
-        tvApple_itunes443 = (TextView) findViewById(R.id.tvApple_itunes443);
-        tvApple_itunes80 = (TextView) findViewById(R.id.tvApple_itunes80);
-        tvAndroid_mtalk5228 = (TextView) findViewById(R.id.tvAndroid_mtalk5228);
-        tvAndroid_play443 = (TextView) findViewById(R.id.tvAndroid_play443);
-        tvWindows_net443 = (TextView) findViewById(R.id.tvWindows_net443);
-        tvWindows_com443 = (TextView) findViewById(R.id.tvWindows_com443);
-
-        // Update TextView depending on network connection type
-        if (currentWiFi == UNKNOWN) {
-            tvConnectedNetwork.setText(NON_WIFI);
-        } else {
-            tvConnectedNetwork.setText(currentWiFi_noQuotes);
-        }
+        createTextViewReferences();
+        wifiConnectionStatus();
 
         final ArrayList<NetworkObject> arrayList = new ArrayList<NetworkObject>();
-
-        arrayList.add(new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
-        arrayList.add(new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
-        arrayList.add(new NetworkObject(COURIER, FIVETWOTWOTHREE, tvApple_courier5223));
-        arrayList.add(new NetworkObject(COURIER, SSL, tvApple_courier443));
-        arrayList.add(new NetworkObject(OCSP, SSL, tvApple_ocsp443));
-        arrayList.add(new NetworkObject(OCSP, EIGHTY, tvApple_ocsp80));
-        arrayList.add(new NetworkObject(ITUNES, SSL, tvApple_itunes443));
-        arrayList.add(new NetworkObject(ITUNES, EIGHTY, tvApple_itunes80));
-        arrayList.add(new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
-        arrayList.add(new NetworkObject(PLAY, SSL, tvAndroid_play443));
-        arrayList.add(new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
+        addItemstoArrayList(arrayList);
 
         // Button listener and invocation of asyncTask Socket
         btnConnectivityTester = (Button) findViewById(R.id.btnConnectivityTester);
@@ -89,9 +61,13 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
+<<<<<<< HEAD
+=======
+                resetItemsInViewFromPreviousTests();
+>>>>>>> OpeningScreen
                 buttonCounter++;
                 ToolKitSocket donkey = new ToolKitSocket(arrayList);
-                Log.d(MA_onClick, "new socket just created");
+//                Log.d(MA_onClick, "new socket just created");
                 donkey.execute();
             }
         });
@@ -101,12 +77,13 @@ public class MainActivity extends ActionBarActivity {
         btnEmailResults.setOnClickListener(new View.OnClickListener() {
 
             String Apple_phobos443, Apple_phobos80,Apple_courier5223,Apple_courier443,Apple_ocsp443,Apple_ocsp80,Apple_itunes443,
-                    Apple_itunes80,Android_mtalk5228,Android_play443,Windows_net443;
+                    Apple_itunes80,Android_mtalk5228,Android_play443,Windows_net443, ConnectedNetwork, currentDateTime;
 
             @Override
             public void onClick(View v) {
 
                 if (buttonCounter < 1) {
+<<<<<<< HEAD
                     Toast testNotRun = Toast.makeText(getApplicationContext(), "You haven't run the test yet!", Toast.LENGTH_LONG);
                     testNotRun.show();
                 } else {
@@ -125,6 +102,28 @@ public class MainActivity extends ActionBarActivity {
                             "mtalk.google.com 5228: " + Android_mtalk5228 + "\n" +
                             "play.google.com 443: " + Android_play443 + "\n" +
                             "s.notify.com 443: " + Windows_net443 + "\n";
+=======
+                    Toast testNotRun = Toast.makeText(getApplicationContext(), "Click Run Test first!", Toast.LENGTH_LONG);
+                    testNotRun.show();
+                } else {
+                    convertTextViewsToStrings();
+                    SimpleDateFormat emailDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
+                    currentDateTime = emailDF.format(Calendar.getInstance().getTime());
+
+                    String message = "Test time: " + currentDateTime + "\n\n" +
+                            "Connected WiFi Network: " + ConnectedNetwork + "\n\n" +
+                            "phobos.apple.com 443: \t" + Apple_phobos443 + "\n" +
+                            "phobos.apple.com 80: \t" + Apple_phobos80 + "\n" +
+                            "*-courier.apple.com 5223: \t" + Apple_courier5223 + "\n" +
+                            "*-courier.apple.com 443: \t" + Apple_courier443 + "\n" +
+                            "ocsp.apple.com 443: \t" + Apple_ocsp443 + "\n" +
+                            "ocsp.apple.com 80: \t" + Apple_ocsp80 + "\n" +
+                            "ax.itunes.apple.com 443: \t" + Apple_itunes443 + "\n" +
+                            "ax.itunes.apple.com 80: \t" + Apple_itunes80 + "\n" +
+                            "mtalk.google.com 5228: \t" + Android_mtalk5228 + "\n" +
+                            "play.google.com 443: \t" + Android_play443 + "\n" +
+                            "s.notify.com 443: \t" + Windows_net443 + "\n";
+>>>>>>> OpeningScreen
 
                     Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:ZachReed@air-watch.com"));
                     sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results");
@@ -145,9 +144,47 @@ public class MainActivity extends ActionBarActivity {
                 Android_mtalk5228 = tvAndroid_mtalk5228.getText().toString();
                 Android_play443 = tvAndroid_play443.getText().toString();
                 Windows_net443 = tvWindows_net443.getText().toString();
+                ConnectedNetwork = tvConnectedNetwork.getText().toString();
             }
         });
 
+    }
+
+    private void wifiConnectionStatus() {
+        WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+        String currentWiFi = wifiInfo.getSSID();
+        String currentWiFi_noQuotes = currentWiFi.substring(1, currentWiFi.length() - 1);
+        Log.d(MA_onCreate, currentWiFi);
+
+        // Update TextView depending on network connection type
+        if (currentWiFi == UNKNOWN) {
+            tvConnectedNetwork.setText(NON_WIFI);
+        } else {
+            tvConnectedNetwork.setText(currentWiFi_noQuotes);
+        }
+    }
+
+    private void resetItemsInViewFromPreviousTests() {
+
+        progress_status = 0;
+        TextView[] array = {tvApple_phobos443, tvApple_phobos80, tvApple_courier5223, tvApple_courier443, tvApple_ocsp443, tvApple_ocsp80, tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443};
+
+        if(buttonCounter > 0) {
+            for (TextView arr : array) {
+                arr.setText(R.string.start_value);
+                arr.setTextAppearance(getApplicationContext(), R.style.default_style);
+            }
+            int PAUSE = 1000;
+            try {
+                Thread.currentThread().sleep(PAUSE);
+                Log.d("Used pause", "due to first button click +1 " + buttonCounter);
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+            }
+        } else {
+            Log.d("skipped reset", "due to first button click");
+        }
     }
 
     // Class for custom object to store necessary network connection-related values
@@ -165,10 +202,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     // Implementation of network test connection using Socket
-    public class ToolKitSocket extends AsyncTask<Void, Void, List<NetworkObject>> {
+    public class ToolKitSocket extends AsyncTask<Void, Integer, List<NetworkObject>> {
 
-        public static final String TK_doInBackground = "TKS.doInBackground";
-        public static final int SO_TIMEOUT = 2000;
+        private static final String TK_doInBackground = "TKS.doInBackground";
+        private static final int SO_TIMEOUT = 2500;
         private final List<NetworkObject> lno;
 
         ToolKitSocket(List<NetworkObject> lno) {
@@ -178,27 +215,36 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected List<NetworkObject> doInBackground(Void... arg0) {
 
-            for (NetworkObject networkObject : lno) {
-                try {
-                    Log.d(TK_doInBackground, networkObject.destAddr + ": " + networkObject.port + " Just entered try block of socket");
-                    socket = new Socket(networkObject.destAddr, networkObject.port);
-                    socket.setSoTimeout(SO_TIMEOUT);
-                    networkObject.response = socket.isConnected();
-                    Log.d(TK_doInBackground, "socketStatus = " + networkObject.response);
-                    if (networkObject.response) {
-                        socket.close();
-                        Log.d(TK_doInBackground, "socket.close() just executed");
+            while (progress_status < 100) {
 
-                    } else {
-                        Log.d(TK_doInBackground, "shit just got real");
+                for (NetworkObject networkObject : lno) {
+                    try {
+//                        Log.d(TK_doInBackground, networkObject.destAddr + ": " + networkObject.port + " Just entered try block of socket");
+                        socket = new Socket();
+                        socket.connect(new InetSocketAddress(networkObject.destAddr, networkObject.port), SO_TIMEOUT);
+                        networkObject.response = socket.isConnected();
+//                        Log.d(TK_doInBackground, "socketStatus = " + networkObject.response);
+                        if (networkObject.response) {
+                            socket.close();
+//                            Log.d(TK_doInBackground, "socket.close() just executed");
+
+                        } else {
+                            Log.d(TK_doInBackground, "shit just got real");
+                        }
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    progress_status +=10;
+                    publishProgress(progress_status);
                 }
             }
             return lno;
+        }
+
+        public void onProgressUpdate(Integer... progress) {
+            progressBar.setProgress(progress_status);
         }
 
         @Override
@@ -213,6 +259,38 @@ public class MainActivity extends ActionBarActivity {
                 }
             }
         }
+    }
+
+    private void addItemstoArrayList(ArrayList<NetworkObject> arrayList) {
+        arrayList.add(new NetworkObject(PHOBOS, SSL, tvApple_phobos443));
+        arrayList.add(new NetworkObject(PHOBOS, EIGHTY, tvApple_phobos80));
+        arrayList.add(new NetworkObject(COURIER, FIVETWOTWOTHREE, tvApple_courier5223));
+        arrayList.add(new NetworkObject(COURIER, SSL, tvApple_courier443));
+        arrayList.add(new NetworkObject(OCSP, SSL, tvApple_ocsp443));
+        arrayList.add(new NetworkObject(OCSP, EIGHTY, tvApple_ocsp80));
+        arrayList.add(new NetworkObject(ITUNES, SSL, tvApple_itunes443));
+        arrayList.add(new NetworkObject(ITUNES, EIGHTY, tvApple_itunes80));
+        arrayList.add(new NetworkObject(MTALK, FIVETWOTWOEIGHT, tvAndroid_mtalk5228));
+        arrayList.add(new NetworkObject(PLAY, SSL, tvAndroid_play443));
+        arrayList.add(new NetworkObject(NOTIFY_NET, SSL, tvWindows_net443));
+    }
+
+    private void createTextViewReferences() {
+        tvConnectedNetwork = (TextView) findViewById(R.id.tvConnectedNetwork);
+        tvApple_phobos443 = (TextView) findViewById(R.id.tvApple_phobos443);
+        tvApple_phobos80 = (TextView) findViewById(R.id.tvApple_phobos80);
+        tvApple_courier5223 = (TextView) findViewById(R.id.tvApple_courier5223);
+        tvApple_courier443 = (TextView) findViewById(R.id.tvApple_courier443);
+        tvApple_ocsp443 = (TextView) findViewById(R.id.tvApple_ocsp443);
+        tvApple_ocsp80 = (TextView) findViewById(R.id.tvApple_ocsp80);
+        tvApple_ocsp443 = (TextView) findViewById(R.id.tvApple_ocsp443);
+        tvApple_itunes443 = (TextView) findViewById(R.id.tvApple_itunes443);
+        tvApple_itunes80 = (TextView) findViewById(R.id.tvApple_itunes80);
+        tvAndroid_mtalk5228 = (TextView) findViewById(R.id.tvAndroid_mtalk5228);
+        tvAndroid_play443 = (TextView) findViewById(R.id.tvAndroid_play443);
+        tvWindows_net443 = (TextView) findViewById(R.id.tvWindows_net443);
+        tvWindows_com443 = (TextView) findViewById(R.id.tvWindows_com443);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     @Override
