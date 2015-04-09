@@ -36,13 +36,9 @@ public class MainActivity extends ActionBarActivity {
             tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
     private Button btnConnectivityTester, btnEmailResults;
     private Socket socket;
-<<<<<<< HEAD
-    int buttonCounter = 0;
-=======
     private int buttonCounter = 0;
     ProgressBar progressBar;
     private int progress_status = 0;
->>>>>>> OpeningScreen
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,10 +57,9 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
-<<<<<<< HEAD
-=======
+
                 resetItemsInViewFromPreviousTests();
->>>>>>> OpeningScreen
+
                 buttonCounter++;
                 ToolKitSocket donkey = new ToolKitSocket(arrayList);
 //                Log.d(MA_onClick, "new socket just created");
@@ -83,29 +78,11 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 if (buttonCounter < 1) {
-<<<<<<< HEAD
+
                     Toast testNotRun = Toast.makeText(getApplicationContext(), "You haven't run the test yet!", Toast.LENGTH_LONG);
                     testNotRun.show();
                 } else {
 
-                    convertTextViewsToStrings();
-
-                    String message = "Results of Network Connectivity testing:\n\n" +
-                            "phobos.apple.com 443: " + Apple_phobos443 + "\n" +
-                            "phobos.apple.com 80: " + Apple_phobos80 + "\n" +
-                            "*-courier.apple.com 5223: " + Apple_courier5223 + "\n" +
-                            "*-courier.apple.com 443: " + Apple_courier443 + "\n" +
-                            "ocsp.apple.com 443: " + Apple_ocsp443 + "\n" +
-                            "ocsp.apple.com 80: " + Apple_ocsp80 + "\n" +
-                            "ax.itunes.apple.com 443: " + Apple_itunes443 + "\n" +
-                            "ax.itunes.apple.com 80: " + Apple_itunes80 + "\n" +
-                            "mtalk.google.com 5228: " + Android_mtalk5228 + "\n" +
-                            "play.google.com 443: " + Android_play443 + "\n" +
-                            "s.notify.com 443: " + Windows_net443 + "\n";
-=======
-                    Toast testNotRun = Toast.makeText(getApplicationContext(), "Click Run Test first!", Toast.LENGTH_LONG);
-                    testNotRun.show();
-                } else {
                     convertTextViewsToStrings();
                     SimpleDateFormat emailDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
                     currentDateTime = emailDF.format(Calendar.getInstance().getTime());
@@ -123,7 +100,7 @@ public class MainActivity extends ActionBarActivity {
                             "mtalk.google.com 5228: \t" + Android_mtalk5228 + "\n" +
                             "play.google.com 443: \t" + Android_play443 + "\n" +
                             "s.notify.com 443: \t" + Windows_net443 + "\n";
->>>>>>> OpeningScreen
+
 
                     Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:ZachReed@air-watch.com"));
                     sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results");
