@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +28,7 @@ import java.util.List;
 
 public class MainActivity extends ActionBarActivity {
 
-    public static final String MA_onClick = "MainActivity.onClick", MA_onCreate = "MainActivity.onCreate";
+    private static final String MA_onClick = "MainActivity.onClick", MA_onCreate = "MainActivity.onCreate";
     private static final String NON_WIFI = "Not connected to WiFi", UNKNOWN = "<unknown ssid>", PHOBOS = "phobos.apple.com", COURIER = "1-courier.apple.com",
             OCSP = "ocsp.apple.com", ITUNES = "ax.itunes.apple.com", MTALK = "mtalk.google.com", PLAY = "play.google.com", NOTIFY_NET = "s.notify.live.net";
     private static final int EIGHTY = 80, SSL = 443, FIVETWOTWOTHREE = 5223, FIVETWOTWOEIGHT = 5228;
@@ -35,13 +36,16 @@ public class MainActivity extends ActionBarActivity {
             tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443;
     private Button btnConnectivityTester, btnEmailResults;
     private Socket socket;
-    int buttonCounter = 0;
+    private int buttonCounter = 0;
+    ProgressBar progressBar;
+    private int progress_status = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        createTextViewReferences();
         wifiConnectionStatus();
 
         final ArrayList<NetworkObject> arrayList = new ArrayList<NetworkObject>();
@@ -53,9 +57,10 @@ public class MainActivity extends ActionBarActivity {
 
             @Override
             public void onClick(View v) {
+                resetItemsInViewFromPreviousTests();
                 buttonCounter++;
                 ToolKitSocket donkey = new ToolKitSocket(arrayList);
-                Log.d(MA_onClick, "new socket just created");
+//                Log.d(MA_onClick, "new socket just created");
                 donkey.execute();
             }
         });
@@ -124,13 +129,33 @@ public class MainActivity extends ActionBarActivity {
         String currentWiFi_noQuotes = currentWiFi.substring(1, currentWiFi.length() - 1);
         Log.d(MA_onCreate, currentWiFi);
 
-        createTextViewReferences();
-
         // Update TextView depending on network connection type
         if (currentWiFi == UNKNOWN) {
             tvConnectedNetwork.setText(NON_WIFI);
         } else {
             tvConnectedNetwork.setText(currentWiFi_noQuotes);
+        }
+    }
+
+    private void resetItemsInViewFromPreviousTests() {
+
+        progress_status = 0;
+        TextView[] array = {tvApple_phobos443, tvApple_phobos80, tvApple_courier5223, tvApple_courier443, tvApple_ocsp443, tvApple_ocsp80, tvApple_itunes443, tvApple_itunes80, tvAndroid_mtalk5228, tvAndroid_play443, tvWindows_net443, tvWindows_com443};
+
+        if(buttonCounter > 0) {
+            for (TextView arr : array) {
+                arr.setText(R.string.start_value);
+                arr.setTextAppearance(getApplicationContext(), R.style.default_style);
+            }
+            int PAUSE = 1000;
+            try {
+                Thread.currentThread().sleep(PAUSE);
+                Log.d("Used pause", "due to first button click +1 " + buttonCounter);
+            } catch (InterruptedException ie) {
+                ie.printStackTrace();
+            }
+        } else {
+            Log.d("skipped reset", "due to first button click");
         }
     }
 
@@ -149,10 +174,10 @@ public class MainActivity extends ActionBarActivity {
     }
 
     // Implementation of network test connection using Socket
-    public class ToolKitSocket extends AsyncTask<Void, Void, List<NetworkObject>> {
+    public class ToolKitSocket extends AsyncTask<Void, Integer, List<NetworkObject>> {
 
-        public static final String TK_doInBackground = "TKS.doInBackground";
-        public static final int SO_TIMEOUT = 2500;
+        private static final String TK_doInBackground = "TKS.doInBackground";
+        private static final int SO_TIMEOUT = 2500;
         private final List<NetworkObject> lno;
 
         ToolKitSocket(List<NetworkObject> lno) {
@@ -162,27 +187,36 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected List<NetworkObject> doInBackground(Void... arg0) {
 
-            for (NetworkObject networkObject : lno) {
-                try {
-                    Log.d(TK_doInBackground, networkObject.destAddr + ": " + networkObject.port + " Just entered try block of socket");
-                    socket = new Socket();
-                    socket.connect(new InetSocketAddress(networkObject.destAddr, networkObject.port), SO_TIMEOUT);
-                    networkObject.response = socket.isConnected();
-                    Log.d(TK_doInBackground, "socketStatus = " + networkObject.response);
-                    if (networkObject.response) {
-                        socket.close();
-                        Log.d(TK_doInBackground, "socket.close() just executed");
+            while (progress_status < 100) {
 
-                    } else {
-                        Log.d(TK_doInBackground, "shit just got real");
+                for (NetworkObject networkObject : lno) {
+                    try {
+//                        Log.d(TK_doInBackground, networkObject.destAddr + ": " + networkObject.port + " Just entered try block of socket");
+                        socket = new Socket();
+                        socket.connect(new InetSocketAddress(networkObject.destAddr, networkObject.port), SO_TIMEOUT);
+                        networkObject.response = socket.isConnected();
+//                        Log.d(TK_doInBackground, "socketStatus = " + networkObject.response);
+                        if (networkObject.response) {
+                            socket.close();
+//                            Log.d(TK_doInBackground, "socket.close() just executed");
+
+                        } else {
+                            Log.d(TK_doInBackground, "shit just got real");
+                        }
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                } catch (UnknownHostException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    progress_status +=10;
+                    publishProgress(progress_status);
                 }
             }
             return lno;
+        }
+
+        public void onProgressUpdate(Integer... progress) {
+            progressBar.setProgress(progress_status);
         }
 
         @Override
@@ -228,6 +262,7 @@ public class MainActivity extends ActionBarActivity {
         tvAndroid_play443 = (TextView) findViewById(R.id.tvAndroid_play443);
         tvWindows_net443 = (TextView) findViewById(R.id.tvWindows_net443);
         tvWindows_com443 = (TextView) findViewById(R.id.tvWindows_com443);
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
     @Override
