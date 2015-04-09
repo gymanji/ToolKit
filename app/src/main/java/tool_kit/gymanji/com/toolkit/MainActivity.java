@@ -78,11 +78,9 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
 
                 if (buttonCounter < 1) {
-
                     Toast testNotRun = Toast.makeText(getApplicationContext(), "You haven't run the test yet!", Toast.LENGTH_LONG);
                     testNotRun.show();
                 } else {
-
                     convertTextViewsToStrings();
                     SimpleDateFormat emailDF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z");
                     currentDateTime = emailDF.format(Calendar.getInstance().getTime());
@@ -101,14 +99,12 @@ public class MainActivity extends ActionBarActivity {
                             "play.google.com 443: \t" + Android_play443 + "\n" +
                             "s.notify.com 443: \t" + Windows_net443 + "\n";
 
-
                     Intent sendEmailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:ZachReed@air-watch.com"));
                     sendEmailIntent.putExtra(Intent.EXTRA_SUBJECT, "ToolKit Network Connectivity Results");
                     sendEmailIntent.putExtra(Intent.EXTRA_TEXT, message);
                     startActivity(sendEmailIntent);
                 }
             }
-
             private void convertTextViewsToStrings() {
                 Apple_phobos443 = tvApple_phobos443.getText().toString();
                 Apple_phobos80 = tvApple_phobos80.getText().toString();
@@ -124,7 +120,6 @@ public class MainActivity extends ActionBarActivity {
                 ConnectedNetwork = tvConnectedNetwork.getText().toString();
             }
         });
-
     }
 
     private void wifiConnectionStatus() {
@@ -134,7 +129,6 @@ public class MainActivity extends ActionBarActivity {
         String currentWiFi_noQuotes = currentWiFi.substring(1, currentWiFi.length() - 1);
         Log.d(MA_onCreate, currentWiFi);
 
-        // Update TextView depending on network connection type
         if (currentWiFi == UNKNOWN) {
             tvConnectedNetwork.setText(NON_WIFI);
         } else {
